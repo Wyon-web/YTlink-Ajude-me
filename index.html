@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playlist de Contribuidores</title>
+<style>
+  :root { --neon: #ff4fd8; --violet: #a855f7; --ink: #1b0b3a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px 200px; /* espaço embaixo pro mascote não cobrir o conteúdo */
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: #fff;
+    background: linear-gradient(#0d0a2e, #5b2a86 60%, #c04fa8); /* fallback se a imagem não carregar */
+  }
+  /* fundo fixo via pseudo-elemento (funciona melhor no celular que background-attachment: fixed) */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: url("fundo.jpg") center / cover no-repeat;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 560px;
+    text-align: center;
+    padding: 28px 22px;
+    background: rgba(20, 8, 48, .55);
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .45);
+  }
+  h1 { margin: 0 0 10px; font-size: 1.7rem; text-shadow: 0 0 14px var(--neon); }
+  p  { margin: 0; line-height: 1.5; opacity: .92; }
+
+  .playlist-link {
+    display: inline-block;
+    margin: 22px 0 6px;
+    padding: 16px 30px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--neon), var(--violet));
+    box-shadow: 0 0 18px rgba(255, 79, 216, .7), 0 0 42px rgba(168, 85, 247, .6);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .playlist-link:hover, .playlist-link:focus-visible { transform: scale(1.05); outline: 3px solid #fff; outline-offset: 3px; }
+
+  /* as duas imagens "sem contexto, só porque sim" */
+  .random-pics { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-top: 28px; }
+  .random-pics img {
+    width: 150px; height: 210px; object-fit: cover;
+    border: 3px solid #fff; border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .5);
+  }
+  .random-pics img:nth-child(1) { transform: rotate(-3deg); }
+  .random-pics img:nth-child(2) { transform: rotate(3deg); }
+
+  /* ---------- mascote ---------- */
+  #oc-wrap {
+    position: fixed; right: 14px; bottom: 14px; z-index: 10;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+    max-width: calc(100vw - 28px);
+  }
+  #bubble {
+    max-width: 250px;
+    padding: 10px 14px;
+    background: #fff; color: var(--ink);
+    font-size: .95rem; line-height: 1.35;
+    border-radius: 14px 14px 4px 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .4);
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .2s, transform .2s;
+    pointer-events: none;
+  }
+  #bubble.show { opacity: 1; transform: none; }
+
+  #oc {
+    width: 150px; height: 150px; padding: 0;
+    border: 3px solid var(--neon); border-radius: 20px;
+    background-color: #fff; background-repeat: no-repeat;
+    box-shadow: 0 0 18px rgba(255, 79, 216, .7);
+    cursor: pointer;
+    animation: bob 3s ease-in-out infinite;
+    transition: transform .12s;
+  }
+  #oc:active { transform: scale(.93); }
+  #oc.done { cursor: default; animation: none; filter: saturate(.6); box-shadow: none; }
+  #oc.shake { animation: shake .5s linear infinite; }
+
+  @keyframes pulse { 50% { transform: scale(1.04); } }
+  @keyframes bob   { 50% { transform: translateY(-5px); } }
+  @keyframes shake {
+    0%, 100% { transform: translate(0, 0) rotate(0); }
+    25% { transform: translate(-4px, 2px) rotate(-4deg); }
+    75% { transform: translate(4px, -2px) rotate(4deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .playlist-link, #oc { animation: none; }
+  }
+  @media (max-width: 480px) {
+    #oc { width: 120px; height: 120px; }
+    #bubble { max-width: 210px; }
+  }
+</style>
+</head>
+<body>
+
+<main class="card">
+  <h1>Playlist de Contribuidores</h1>
+  <p>A playlist está passando por uma reforma, mas você pode ajudar a melhorar a experiência dos ouvintes.</p>
+
+  <a class="playlist-link" href="https://www.youtube.com/playlist?list=PLA6yM7UBC7go&jct=BT_MmY_pIZgt9i2yHL_SRw">
+    ▶ Abrir a playlist
+  </a>
+
+  <div class="random-pics">
+    <img src="bomdia.webp" alt="Mulher sobre uma tulipa gigante, com arco-íris e o texto Bom Dia">
+    <img src="cavalo.jpg" alt="Cavalo marrom de cabresto com uma faixa branca no focinho">
+  </div>
+</main>
+
+<!-- mascote (OC) -->
+<div id="oc-wrap">
+  <div id="bubble" role="status" aria-live="polite"></div>
+  <button id="oc" type="button" aria-label="Clique no personagem"></button>
+</div>
+
+<script>
+(() => {
+  /* ================= CONFIG ================= */
+  const CONFIG = {
+    RICK_URL: 'https://m.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUXbmV2ZXIgZ29ubmEgZ2l2ZSB5b3UgdXA%3D',
+    RICK_AT: 6,              // clique (total, somando visitas) em que ele te manda pro Rick
+    IDLE_FIRST: 4000,        // 1ª fala espontânea
+    IDLE_MIN: 8000,          // intervalo entre falas espontâneas
+    IDLE_MAX: 14000,
+    SHEET: 'oc-sprites.png', // 5 poses lado a lado, cada célula 420x420
+    CELL: 420,
+    // posição de cada pose na folha (0 = primeira célula)
+    POSES: {
+      main: 0,   // apontando
+      tip: 1,    // tocando o chapéu
+      talk: 2,   // com balãozinho "..."
+      happy: 3,  // olhos felizes
+      back: 4    // de costas, ouvindo música
+    }
+  };
+
+  /* ================= FRASES ================= */
+  // 1ª visita: usadas nas falas espontâneas e nos primeiros cliques
+  const FIRST = [
+    'Eae!',
+    'Joia?',
+    'Link para playlist de contribuidores logo a frente... Ou abaixo.',
+    'A playlist atualmente está passando por uma reforma, mas você pode ajudar a melhorar a experiência geral dos ouvintes :)',
+    '...',
+    'O link tá alí.'
+  ];
+  // quando a pessoa fecha o site e volta
+  const GREETING = 'Ah, Olá de novo!';
+  const RETURNING = [
+    'Já sabe onde fica o link!',
+    'Você vai fazer isso de novo mesmo?',
+    'Hmm, manhoso.',
+    'Voltou só pra me clicar, né?',
+    'Eu lembro de você, sabia?',
+    'O link continua no mesmo lugar.',
+    'Tá me testando?',
+    'Curioso(a), hein...'
+  ];
+  // frases fixas por número total de cliques
+  const MILESTONES = {
+    3: 'Eeh...',
+    4: 'Você vai continuar me clicando, não vai?',
+    5: 'Às más línguas dizem que se você clicar 100 vezes, um ester egg acontece nesse site...'
+  };
+  const FALLBACK = ['...', 'Hm.', 'Tá bom, tá bom.'];
+
+  /* ================= ESTADO (lembrado entre visitas) ================= */
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('oc:' + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem('oc:' + k, JSON.stringify(v)); } catch {} }
+  };
+  const state = { clicks: 0, used: [], visits: 0, pending: false, done: false };
+  const load = () => { for (const k in state) state[k] = store.get(k, state[k]); };
+  const save = () => { for (const k in state) store.set(k, state[k]); };
+
+  /* ================= ELEMENTOS ================= */
+  const oc = document.getElementById('oc');
+  const bubble = document.getElementById('bubble');
+  oc.style.backgroundImage = `url("${CONFIG.SHEET}")`;
+
+  let typeT, hideT, idleT;
+  let typing = false, leaving = false, greeted = false;
+  let returning = false, currentPose = 'main';
+
+  /* ================= UTILIDADES ================= */
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  // sorteia uma frase ainda não usada e marca como usada (para sempre)
+  function take(pool) {
+    const free = pool.filter(l => !state.used.includes(l));
+    if (!free.length) return null;
+    const line = pick(free);
+    state.used.push(line);
+    save();
+    return line;
+  }
+
+  // recorta a pose certa da folha de sprites
+  function setPose(name) {
+    currentPose = name;
+    const cell = oc.clientWidth;
+    oc.style.backgroundSize = `${cell * Object.keys(CONFIG.POSES).length}px ${cell}px`;
+    oc.style.backgroundPosition = `${-CONFIG.POSES[name] * cell}px 0`;
+  }
+  window.addEventListener('resize', () => setPose(currentPose));
+
+  /* ================= BALÃO ================= */
+  function say(text, pose = 'talk') {
+    clearInterval(typeT); clearTimeout(hideT);
+    bubble.textContent = '';
+    bubble.classList.add('show');
+    setPose(pose);
+    typing = true;
+    let i = 0;
+    typeT = setInterval(() => {
+      bubble.textContent = text.slice(0, ++i);
+      if (i >= text.length) {
+        clearInterval(typeT);
+        typing = false;
+        hideT = setTimeout(hide, Math.max(2600, text.length * 55));
+      }
+    }, 28);
+  }
+  function hide() {
+    bubble.classList.remove('show');
+    setPose(state.done ? 'back' : 'main');
+  }
+
+  /* ================= FALAS ESPONTÂNEAS ================= */
+  function scheduleIdle(delay) {
+    clearTimeout(idleT);
+    if (state.done || leaving) return;
+    idleT = setTimeout(() => {
+      if (state.done || leaving) return;
+      if (typing || document.hidden || bubble.classList.contains('show')) return scheduleIdle(2000);
+      const line = (returning && !greeted && (greeted = true)) ? GREETING : take(returning ? RETURNING : FIRST);
+      if (!line) return; // acabaram as frases novas: ele fica quieto
+      say(line);
+      scheduleIdle();
+    }, delay ?? rand(CONFIG.IDLE_MIN, CONFIG.IDLE_MAX));
+  }
+
+  /* ================= CLIQUES ================= */
+  function chooseLine() {
+    if (returning && !greeted) { greeted = true; return GREETING; }
+    const n = state.clicks;
+    if (MILESTONES[n]) return MILESTONES[n];
+    return take(returning ? RETURNING : FIRST)
+        || take(returning ? FIRST : RETURNING)
+        || pick(FALLBACK);
+  }
+
+  function finale() {
+    leaving = true;
+    state.pending = true;
+    save();
+    clearTimeout(idleT);
+    oc.classList.add('shake');
+    say('...', 'happy');
+    setTimeout(() => { location.href = CONFIG.RICK_URL; }, 1600);
+  }
+
+  oc.addEventListener('click', () => {
+    if (state.done || leaving) return; // depois do rickroll, clicar não faz mais nada
+    state.clicks++;
+    save();
+    if (state.clicks >= CONFIG.RICK_AT) return finale();
+    say(chooseLine(), pick(['tip', 'happy', 'main', 'talk']));
+    scheduleIdle(); // reinicia o relógio das falas espontâneas
+  });
+
+  /* ================= VOLTA DO RICKROLL ================= */
+  function handleReturn() {
+    load();
+    if (!state.pending) return;
+    state.pending = false;
+    state.done = true;
+    save();
+    leaving = false;
+    clearTimeout(idleT);
+    oc.classList.remove('shake');
+    oc.classList.add('done');
+    oc.setAttribute('aria-disabled', 'true');
+    say('kkkk', 'happy');
+  }
+  // cobre o caso de a página ser restaurada do cache ao apertar "voltar"
+  window.addEventListener('pageshow', e => { if (e.persisted) handleReturn(); });
+
+  /* ================= INÍCIO ================= */
+  load();
+  if (state.pending) {
+    handleReturn();
+  } else if (state.done) {
+    oc.classList.add('done');
+    oc.setAttribute('aria-disabled', 'true');
+    setPose('back');
+  } else {
+    // conta uma visita nova por sessão (aba/janela)
+    let newSession = true;
+    try { newSession = !sessionStorage.getItem('oc:s'); sessionStorage.setItem('oc:s', '1'); } catch {}
+    if (newSession) { state.visits++; save(); }
+    returning = state.visits > 1;
+    setPose('main');
+    scheduleIdle(CONFIG.IDLE_FIRST);
+  }
+})();
+</script>
+</body>
+</html>
